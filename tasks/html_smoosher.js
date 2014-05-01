@@ -20,7 +20,9 @@ module.exports = function(grunt) {
     var options = this.options({
       jsDir: "",
       cssDir: "",
-      minify: false
+      minify: false,
+      js: true,
+      css: true
     }); 
 
     options.cssTags = this.options().cssTags || {
@@ -48,7 +50,7 @@ module.exports = function(grunt) {
       var $ = cheerio.load(grunt.file.read(filePair.src));
 
       grunt.log.writeln('Reading: ' + path.resolve(filePair.src.toString()));
-
+      if(options.css){
       $('link[rel="stylesheet"]').each(function () {
         var style = $(this).attr('href');
         if(!style) { return; }
@@ -70,7 +72,9 @@ module.exports = function(grunt) {
         grunt.log.writeln(('Including CSS: ').cyan + filePath);
         $(this).replaceWith(options.cssTags.start + processInput(grunt.file.read(filePath)) + options.cssTags.end);
       });
+      }
 
+      if(options.js){
       $('script').each(function () {
         var script = $(this).attr('src');
         if(!script) { return; }
@@ -89,7 +93,8 @@ module.exports = function(grunt) {
         //create and replace script with new scipt tag
         $(this).replaceWith(options.jsTags.start + processInput(grunt.file.read(filePath)) + options.jsTags.end);
       });
-
+      }
+      
       $('img').each(function () {
         var src = $(this).attr('src');
         if (!src) { return; }
