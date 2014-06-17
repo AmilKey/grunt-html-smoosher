@@ -22,7 +22,8 @@ module.exports = function(grunt) {
       cssDir: "",
       minify: false,
       js: true,
-      css: true
+      css: true,
+      img: false
     }); 
 
     options.cssTags = this.options().cssTags || {
@@ -95,13 +96,15 @@ module.exports = function(grunt) {
       });
       }
       
-      $('img').each(function () {
-        var src = $(this).attr('src');
-        if (!src) { return; }
-        if (src.match(/^\/\//)) { return; }
-        if (url.parse(src).protocol) { return; }
-        $(this).attr('src', 'data:image/' + src.substr(src.lastIndexOf('.')+1) + ';base64,' + new Buffer(grunt.file.read(path.join(path.dirname(filePair.src), src), { encoding: null })).toString('base64'));
-      });
+      if(options.img){
+        $('img').each(function () {
+          var src = $(this).attr('src');
+          if (!src) { return; }
+          if (src.match(/^\/\//)) { return; }
+          if (url.parse(src).protocol) { return; }
+          $(this).attr('src', 'data:image/' + src.substr(src.lastIndexOf('.')+1) + ';base64,' + new Buffer(grunt.file.read(path.join(path.dirname(filePair.src), src), { encoding: null })).toString('base64'));
+        });
+      }
       
       var html = $.html();
       // replace relative path
