@@ -13,7 +13,7 @@ module.exports = function(grunt) {
   var cheerio = require('cheerio');
   var path = require('path');
   var url = require('url');
-  var uglify = require('uglifyjs');
+  var uglify = require('uglify-js');
 
   grunt.registerMultiTask('smoosher', 'Turn your distribution into something pastable.', function() {
 
@@ -24,7 +24,7 @@ module.exports = function(grunt) {
       js: true,
       css: true,
       img: false
-    }); 
+    });
 
     options.cssTags = this.options().cssTags || {
       start: '<style>',
@@ -67,7 +67,7 @@ module.exports = function(grunt) {
           //don't want to rel
           delete attributes.rel;
         }
-        
+
         if(url.parse(style).protocol) { return; }
         var filePath = (style.substr(0,1) === "/") ? path.resolve(options.cssDir, style.substr(1)) : path.join(path.dirname(filePair.src), style);
         grunt.log.writeln(('Including CSS: ').cyan + filePath);
@@ -95,7 +95,7 @@ module.exports = function(grunt) {
         $(this).replaceWith(options.jsTags.start + processInput(grunt.file.read(filePath)) + options.jsTags.end);
       });
       }
-      
+
       if(options.img){
         $('img').each(function () {
           var src = $(this).attr('src');
@@ -105,11 +105,11 @@ module.exports = function(grunt) {
           $(this).attr('src', 'data:image/' + src.substr(src.lastIndexOf('.')+1) + ';base64,' + new Buffer(grunt.file.read(path.join(path.dirname(filePair.src), src), { encoding: null })).toString('base64'));
         });
       }
-      
+
       var html = $.html();
       // replace relative path
       html = html.replace(/[.]{2}\//g,'');
-      
+
       grunt.file.write(path.resolve(filePair.dest), html);
       grunt.log.writeln(('Created ').green + path.resolve(filePair.dest));
     });
